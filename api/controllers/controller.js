@@ -17,16 +17,16 @@ exports.sessions =  function (req,res) { //lista
  // if (req.headers.token !== token) return res.sendStatus(401);
  hub = req.query.hubname;
  
-  tools.getConnections(hub, function(err,data) {
-    if (err) {
-      res.sendStatus(400);
-      res.end(); 
-    }
-    else {
-      res.send(data);    
-      res.end(); 
-    }
-  });
+ tools.getConnections(hub, function(err,data) {
+  if (err) {
+    res.sendStatus(400);
+    res.end(); 
+  }
+  else {
+    res.send(data);    
+    res.end(); 
+  }
+});
 };
 
 
@@ -54,18 +54,23 @@ exports.new_user = function (req,res) { //lista
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
   hub = req.query.hubname;
-  if (hubList.indexOf(hub) > -1) {
-    var userName = req.body.user_name;
-    var passwd = req.body.password;
-    var description = req.body.description;
-    var group = req.body.group;
-    tools.createUser(hub,userName,passwd,description,group);  
-  }
-  else {
-    res.send("Hub not found");
-  }
-  onsole.log("New User Saved");
-  res.end(); 
+  
+  var userName = req.body.user_name;
+  var passwd = req.body.password;
+  var description = req.body.description;
+  var group = req.body.group;
+  
+  tools.createUser(hub,userName,passwd,description,group, function(err,data) {
+    if (err) {
+      res.sendStatus(400);
+      res.end(); 
+    }
+    else {
+      res.sendStatus(200);
+      console.log("New User Saved");
+      res.end(); 
+    }
+  });  
 }; 
 
 
@@ -111,8 +116,9 @@ exports.session_list = function (req,res) { //lista
 
 
 exports.generate_pass = function (req,res) { //lista
-  var password = tools.generatePass();
-  res.send(password);
+  var password = tools.generatePass(function(err,data) {
+    res.send(password);  
+  });
 };
 
 exports.vnc = function (req,res) { //lista

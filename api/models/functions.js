@@ -75,10 +75,6 @@ module.exports = {
 
 
   getAllUsers(hub,callback) {
-    var info = [];
-    var oneUser = []; 
-    var users = [];
-    var temp = [];
     exec2(CONNECTION + hub + " /csv /cmd UserList", function(err,data) {
       if (err) { 
         callback(err); 
@@ -87,27 +83,50 @@ module.exports = {
         callback(null,csvjson.toObject(data, options));
       }
     });
-
-    //return csvjson.toObject(info, options);
   },
 
-  createUser: function(hub,accountName,password,completeName, group) {
-    if (group == undefined) {
+  createUser: function(hub,accountName,password,completeName, group, callback) {
+    if (group == "") {
       group = "none";
     }
-    exec(CONNECTION + hub + " /cmd UserCreate " + accountName + " /GROUP:" + group + "/REALNAME:" + completeName + " /NOTE:none");
-    exec(CONNECTION + hub + " /cmd UserPasswordSet " + accountName + " /Password:" + password);
-
+    exec2(CONNECTION + hub + " /cmd UserCreate " + accountName + " /GROUP:" + group + " /REALNAME:" + completeName + " /NOTE:none", function(err,data) {
+      if (err) {
+        callback(err);
+      }
+      else {
+        exec2(CONNECTION + hub + " /cmd UserPasswordSet " + accountName + " /Password:" + password, function(err,data) {
+          if (err) {
+            callback(err);
+          }
+          else {
+            callback(null, data);
+          }
+        });
+      }
+    });
   },
 
   setPassword: function(hub,accountName,password) {
-    exec(CONNECTION + hub + " /cmd UserPasswordSet " + accountName + "/Password:" + password);
-    return;
+    exec2(CONNECTION + hub + " /cmd UserPasswordSet " + accountName + "/Password:" + password, function() {
+      if (err) {
+        callback(err);
+      }
+      else {
+        callback(null, data);
+      }
+    });
   },
 
 
   deleteUser: function(hub,userName) {
-    exec(CONNECTION + hub + " /cmd UserDelete " + userName);
+    exec2(CONNECTION + hub + " /cmd UserDelete " + userName, function(err,data) {
+      if (err) {
+        callback(err);
+      }
+      else {
+        callback(null, data);
+      }
+    });
   },
 
   //WARNING
@@ -126,9 +145,9 @@ module.exports = {
     return JSON.stringify(info);
   },
 
-  generatePass: function() { 
+  generatePass: function(callback) { 
     var password = Math.random().toString(36).slice(-8);
-    return password;
+    callback(password);
   },
 
   vncConnect: function(ip) {    
