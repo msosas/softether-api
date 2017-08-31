@@ -10,18 +10,23 @@ exports.check_server = function(req,res) {
 };
 
 exports.sessions =  function (req,res) { //lista
-  if (!req.body) return res.sendStatus(400);
+  if (!req.body) { 
+    return res.sendStatus(400);
+  }
   console.log("Checking Sessions...");
  // if (req.headers.token !== token) return res.sendStatus(401);
-  hub = req.query.hubname;
-  if(hubList.indexOf(hub) > -1) {
-    var sessions = tools.getConnections(hub);
-    res.send(sessions);
-  }
-  else {
-    res.send("Hub not found");
-  }    
-  res.end(); 
+ hub = req.query.hubname;
+ 
+  tools.getConnections(hub, function(err,data) {
+    if (err) {
+      res.sendStatus(400);
+      res.end(); 
+    }
+    else {
+      res.send(data);    
+      res.end(); 
+    }
+  });
 };
 
 
@@ -29,16 +34,19 @@ exports.all_users = function (req,res) { //lista
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
   console.log("Getting all users...");
-  console.log(req.query.hubname);
+  
   hub = req.query.hubname;
-  if(hubList.indexOf(hub) > -1) {
-    var users = tools.getAllUsers(hub);
-    res.send(users);
-  }
-  else {
-    res.send("Hub not found");
-  } 
-  res.end(); 
+  
+  tools.getAllUsers(hub, function(err,data) {
+    if (err) { 
+      res.sendStatus(400); 
+      res.end();  
+    }
+    else {
+      res.send(data);  
+      res.end(); 
+    }    
+  });  
 };
 
 
@@ -110,7 +118,7 @@ exports.generate_pass = function (req,res) { //lista
 exports.vnc = function (req,res) { //lista
   if (!req.body) return res.sendStatus(400);
  // if (req.headers.token !== token) return res.sendStatus(401);
-  ip = req.query.ip;
-  var url = tools.vncConnect(ip);
-  res.end(); 
+ ip = req.query.ip;
+ var url = tools.vncConnect(ip);
+ res.end(); 
 };

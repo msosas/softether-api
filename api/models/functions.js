@@ -7,7 +7,8 @@ const VPNPORT = credentials.port;
 const PASSWORD = credentials.password;
 const CONNECTION = "/usr/local/vpnclient/./vpncmd /server " +  VPNSERVER + ":" + VPNPORT + " /password:" + PASSWORD + " /adminhub:";
 const VNCPATH = "../novnc/utils/./launch.sh"
-var exec =  require("child_process").execSync; 
+var exec = require("child_process").execSync; 
+var exec2 =  require("child_process").exec;
 var vnc;
 
 
@@ -25,46 +26,69 @@ if(VPNSERVER == "") {
 
 module.exports = {
 
-  sessionList: function(hub) {
+  sessionList: function(hub, callback) {
 
-    var info = [];
-    var sessions = [];
-    var temp = [];
-    info = exec(CONNECTION + hub + " /csv /cmd SessionList").toString();
-    return csvjson.toObject(info, options);
+    exec2(CONNECTION + hub + " /csv /cmd SessionList", function(err,data) {
+      if (err) {
+        callback(err);
+      }
+      else {
+        callback(null, csvjson.toObject(data, options));    
+      }
+    });
   },
 
-  IpTable: function(hub) {
-    var info = [];
-    var sessions = [];
-    var temp = [];
-    info = exec(CONNECTION + hub + " /csv /cmd IpTable").toString();   
-    return csvjson.toObject(info, options);
+  IpTable: function(hub,callback) {
+    exec2(CONNECTION + hub + " /csv /cmd IpTable", function(err,data) {
+      if (err) {
+        callback(err);
+      }
+      else {
+        callback(null, csvjson.toObject(data, options));    
+      }
+    });
   },
 
-  getConnections: function(hub) {
-    var sessions = [];
-    var temp = [];
-    var info = [];
+  getConnections: function(hub,callback) {
 
     if(hub == "servers") {
-      sessions = module.exports.sessionList(hub);
+      module.exports.sessionList(hub, function(err,data) {
+        if(err) {
+          callback(err);
+        }
+        else {
+          callback(null, data);
+        }
+      });
     }
     else {
-      sessions = module.exports.IpTable(hub);
+      module.exports.IpTable(hub, function(err, data) {
+        if (err) {
+          callback(err);
+        }
+        else {
+          callback(null, data)
+        }
+      });
     }
-    return sessions; 
   },
 
 
-  getAllUsers(hub) {
-
+  getAllUsers(hub,callback) {
+    var info = [];
     var oneUser = []; 
     var users = [];
     var temp = [];
-    var info = exec(CONNECTION + hub + " /csv /cmd UserList").toString();
+    exec2(CONNECTION + hub + " /csv /cmd UserList", function(err,data) {
+      if (err) { 
+        callback(err); 
+      }
+      else {
+        callback(null,csvjson.toObject(data, options));
+      }
+    });
 
-    return csvjson.toObject(info, options);
+    //return csvjson.toObject(info, options);
   },
 
   createUser: function(hub,accountName,password,completeName, group) {
