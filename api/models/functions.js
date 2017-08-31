@@ -1,4 +1,6 @@
 /*global require module*/
+var csvjson = require('csvjson');
+
 var credentials = require('../models/credentials.js');
 const VPNSERVER = credentials.server;
 const VPNPORT = credentials.port;
@@ -7,6 +9,14 @@ const CONNECTION = "/usr/local/vpnclient/./vpncmd /server " +  VPNSERVER + ":" +
 const VNCPATH = "../novnc/utils/./launch.sh"
 var exec =  require("child_process").execSync; 
 var vnc;
+
+
+//For CSV to JSON
+var options = {
+  delimiter : ',', 
+  quote     : '"'  
+};
+
 //********************************************************************************
 
 if(VPNSERVER == "") {
@@ -20,45 +30,16 @@ module.exports = {
     var info = [];
     var sessions = [];
     var temp = [];
-    info = exec(CONNECTION + hub + " /cmd SessionList").toString().split("\n");
-    info = info.splice(14);
-    for (var i = 0 ; i < info.length-8;) {
-      for (var j = 0 ; j < 9; j++) {
-        temp.push(info[i+j].substring(17));       
-      }
-      
-      temp[0] = temp[4];
-      if (temp[3] !== "SecureNAT Session" && temp[0] !== "L3SW_ro") { // Don't include stystem connections
-        temp.splice(4,1); //Remove duplicated username in [4]      
-        sessions.push(temp);
-      }
-
-      temp = [];
-      i=i+j;
-    }
-    return JSON.stringify(sessions);
+    info = exec(CONNECTION + hub + " /csv /cmd SessionList").toString();
+    return csvjson.toObject(info, options);
   },
 
   IpTable: function(hub) {
     var info = [];
     var sessions = [];
     var temp = [];
-    //const htmlPlayIcon = "<i class='material-icons'> &nbsp; play_circle_outline</i>";
-    info = exec(CONNECTION + hub + " /cmd IpTable").toString().split("\n");   
-    info = info.splice(14);
-    for (i = 0 ; i < info.length-9;) {
-      for (j = 0 ; j < 7; j++) {
-        temp.push(info[i+j].substring(13));       
-      }
-      temp[3] = temp[3].replace(" (DHCP)",""); // Remove DHCP
-      temp[0] = temp[2].split("-")[1].toLowerCase(); // Build user name
-      temp[6] = temp[6].replace("On ","");
-      sessions.push(temp); 
-      //temp.push(htmlPlayIcon);
-      temp = [];
-      i=i+j;      
-    }
-    return JSON.stringify(sessions);
+    info = exec(CONNECTION + hub + " /csv /cmd IpTable").toString();   
+    return csvjson.toObject(info, options);
   },
 
   getConnections: function(hub) {
@@ -77,27 +58,13 @@ module.exports = {
 
 
   getAllUsers(hub) {
-   
+
     var oneUser = []; 
     var users = [];
     var temp = [];
-    var info = exec(CONNECTION + hub + " /cmd UserList").toString().split("\n");
+    var info = exec(CONNECTION + hub + " /csv /cmd UserList").toString();
 
-    info = info.splice(14); //Remove header
-
-    for (var i = 0 ; i < info.length-9;) {
-      for (var j = 0 ; j < 11; j++) {
-        temp.push(info[i+j].substring(17));  // Remove field description    
-      }
-      temp.shift();
-      oneUser.push(temp[0]);
-      oneUser.push(temp[1]);        
-      users.push(oneUser);
-      temp = [];
-      oneUser = [];
-      i=i+j;  
-    }
-    return JSON.stringify(users);
+    return csvjson.toObject(info, options);
   },
 
   createUser: function(hub,accountName,password,completeName, group) {
@@ -106,7 +73,7 @@ module.exports = {
     }
     exec(CONNECTION + hub + " /cmd UserCreate " + accountName + " /GROUP:" + group + "/REALNAME:" + completeName + " /NOTE:none");
     exec(CONNECTION + hub + " /cmd UserPasswordSet " + accountName + " /Password:" + password);
- 
+
   },
 
   setPassword: function(hub,accountName,password) {
@@ -119,6 +86,8 @@ module.exports = {
     exec(CONNECTION + hub + " /cmd UserDelete " + userName);
   },
 
+  //WARNING
+  //Soft Ether doens generate CSV properly for this command. Keeping old parsing
   userDetails: function(hub,userName) {
     var info = exec(CONNECTION + hub + " /cmd UserGet " + userName).toString().split("\n");
     info = info.splice(14); //Remove header
