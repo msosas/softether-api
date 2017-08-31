@@ -118,8 +118,9 @@ module.exports = {
   },
 
 
-  deleteUser: function(hub,userName) {
+  deleteUser: function(hub,userName, callback) {
     exec2(CONNECTION + hub + " /cmd UserDelete " + userName, function(err,data) {
+      console.log(hub);
       if (err) {
         callback(err);
       }

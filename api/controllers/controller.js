@@ -15,7 +15,7 @@ exports.sessions =  function (req,res) { //lista
   }
   console.log("Checking Sessions...");
  // if (req.headers.token !== token) return res.sendStatus(401);
- hub = req.query.hubname;
+ hub = req.query.hubName;
  
  tools.getConnections(hub, function(err,data) {
   if (err) {
@@ -35,7 +35,7 @@ exports.all_users = function (req,res) { //lista
   //if (req.headers.token !== token) return res.sendStatus(401);
   console.log("Getting all users...");
   
-  hub = req.query.hubname;
+  hub = req.query.hubName;
   
   tools.getAllUsers(hub, function(err,data) {
     if (err) { 
@@ -53,9 +53,9 @@ exports.all_users = function (req,res) { //lista
 exports.new_user = function (req,res) { //lista
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
-  hub = req.query.hubname;
+  hub = req.query.hubName;
   
-  var userName = req.body.user_name;
+  var userName = req.body.userName;
   var passwd = req.body.password;
   var description = req.body.description;
   var group = req.body.group;
@@ -75,19 +75,26 @@ exports.new_user = function (req,res) { //lista
 
 
 exports.delete_user = function (req,res) { //lista
-  var userName;
   if (!req.body) return res.sendStatus(400);
-  if (req.body.token !== token) return res.sendStatus(401);
-  hub = req.body.hubName;
-  userName = req.body.userName;
-  tools.deleteUser(hub,userName);
-  res.end();   
+  //if (req.body.token !== token) return res.sendStatus(401);
+  hub = req.query.hubName;
+  var userName = req.body.userName;
+  tools.deleteUser(hub,userName, function(err,data) {
+    if (err) {
+      res.sendStatus(400);
+      res.end();
+    }
+    else {
+      res.sendStatus(200);
+      res.end();
+    }
+  });
 };  
 
 exports.user_details = function (req,res) { //lista
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
-  hub = req.query.hubname;
+  hub = req.query.hubName;
   var userName = req.query.username;
   if(hubList.indexOf(hub) > -1) {
     var user = tools.userDetails(hub,userName);
