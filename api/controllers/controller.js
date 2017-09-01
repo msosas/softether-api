@@ -6,6 +6,7 @@ var tools = require('../models/functions.js');
 exports.check_server = function(req,res) {
   tools.check(function(err,data){
     if (err) {
+      console.log("Error code: " + err.code);
       res.sendStatus(500);
       res.end();
     }
@@ -26,6 +27,7 @@ exports.sessions =  function (req,res) {
  
   tools.getConnections(hub, function(err,data) {
     if (err) {
+      console.log("Error code: " + err.code);
       res.sendStatus(400);
       res.end(); 
     }
@@ -46,6 +48,7 @@ exports.all_users = function (req,res) {
   
   tools.getAllUsers(hub, function(err,data) {
     if (err) { 
+      console.log("Error code: " + err.code);
       res.sendStatus(400); 
       res.end();  
     }
@@ -69,6 +72,7 @@ exports.new_user = function (req,res) {
   
   tools.createUser(hub,userName,passwd,description,group, function(err,data) {
     if (err) {
+      console.log("Error code: " + err.code);
       res.sendStatus(400);
       res.end(); 
     }
@@ -88,6 +92,7 @@ exports.delete_user = function (req,res) {
   var userName = req.body.userName;
   tools.deleteUser(hub,userName, function(err,data) {
     if (err) {
+      console.log("Error code: " + err.code);
       res.sendStatus(400);
       res.end();
     }
@@ -106,6 +111,7 @@ exports.user_details = function (req,res) {
   
   tools.userDetails(hub,userName,function(err,data){
     if (err) {
+      console.log("Error code: " + err.code);
       res.sendStatus(400);
       res.end(); 
     }

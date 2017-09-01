@@ -142,7 +142,6 @@ module.exports = {
 
   deleteUser: function(hub,userName, callback) {
     exec(CONNECTION + hub + " /cmd UserDelete " + userName, function(err,data) {
-      console.log(hub);
       if (err) {
         callback(err);
       }
@@ -158,6 +157,7 @@ module.exports = {
 
     exec(CONNECTION + hub + " /cmd UserGet " + userName, function(err,data) {
       if (err) {
+        console.log("Error code: " + err.code);
         callback(err);
       }
       else {
