@@ -96,7 +96,7 @@ module.exports = {
   },
 
 
-  getAllUsers(hub,callback) {
+  getAllUsers: function(hub,callback) {
     exec(CONNECTION + hub + " /csv /cmd UserList", function(err,data) {
       if (err) { 
         callback(err); 

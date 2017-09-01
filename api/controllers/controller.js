@@ -1,5 +1,5 @@
 var tools = require('../models/functions.js');
-
+var token = '29131f3d713e8e360777ac3d2c1d42c8';
 
 // *********** Page Handling  ****************
 
@@ -22,8 +22,8 @@ exports.sessions =  function (req,res) {
     return res.sendStatus(400);
   }
   console.log("Checking Sessions...");
- // if (req.headers.token !== token) return res.sendStatus(401);
- var hub = req.query.hubName;
+  if (req.body.token != token) return res.sendStatus(401);
+  var hub = req.body.hubName;
  
   tools.getConnections(hub, function(err,data) {
     if (err) {
@@ -41,10 +41,11 @@ exports.sessions =  function (req,res) {
 
 exports.all_users = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
-  //if (req.headers.token !== token) return res.sendStatus(401);
+  if (req.body.token != token) return res.sendStatus(401);
   console.log("Getting all users...");
   
-  var hub = req.query.hubName;
+  var hub = req.body.hubName;
+  console.log(hub);
   
   tools.getAllUsers(hub, function(err,data) {
     if (err) { 
@@ -106,8 +107,8 @@ exports.delete_user = function (req,res) {
 exports.user_details = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
-  var hub = req.query.hubName;
-  var userName = req.query.userName;
+  var hub = req.body.hubName;
+  var userName = req.body.userName;
   
   tools.userDetails(hub,userName,function(err,data){
     if (err) {
