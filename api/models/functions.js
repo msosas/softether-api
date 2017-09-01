@@ -1,6 +1,6 @@
 /*global require module*/
 var csvjson = require('csvjson');
-
+var lodash = require('lodash');
 var credentials = require('../models/credentials.js');
 const VPNSERVER = credentials.server;
 const VPNPORT = credentials.port;
@@ -43,7 +43,13 @@ module.exports = {
         callback(err);
       }
       else {
-        callback(null, csvjson.toObject(data, options));    
+        var result = csvjson.toObject(data, options);
+
+        callback(null,
+          lodash.forEach(result, function(data){
+            data["IP Address"] = data["IP Address"].replace(" (DHCP)", "");
+          })
+        );
       }
     });
   },

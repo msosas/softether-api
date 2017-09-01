@@ -8,6 +8,7 @@
     "body-parser": "latest",
     "csvjson": "^4.3.4",
     "express": "latest",
-    "express-ipfilter": "latest"
+    "express-ipfilter": "latest",
+    "lodash": "^4.17.4"
   }
 }
