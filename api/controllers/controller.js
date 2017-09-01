@@ -9,7 +9,7 @@ exports.check_server = function(req,res) {
   res.end();
 };
 
-exports.sessions =  function (req,res) { //lista
+exports.sessions =  function (req,res) { 
   if (!req.body) { 
     return res.sendStatus(400);
   }
@@ -17,20 +17,20 @@ exports.sessions =  function (req,res) { //lista
  // if (req.headers.token !== token) return res.sendStatus(401);
  hub = req.query.hubName;
  
- tools.getConnections(hub, function(err,data) {
-  if (err) {
-    res.sendStatus(400);
-    res.end(); 
-  }
-  else {
-    res.send(data);    
-    res.end(); 
-  }
-});
+  tools.getConnections(hub, function(err,data) {
+    if (err) {
+      res.sendStatus(400);
+      res.end(); 
+    }
+    else {
+      res.send(data);    
+      res.end(); 
+    }
+  });
 };
 
 
-exports.all_users = function (req,res) { //lista
+exports.all_users = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
   console.log("Getting all users...");
@@ -50,7 +50,7 @@ exports.all_users = function (req,res) { //lista
 };
 
 
-exports.new_user = function (req,res) { //lista
+exports.new_user = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
   hub = req.query.hubName;
@@ -74,7 +74,7 @@ exports.new_user = function (req,res) { //lista
 }; 
 
 
-exports.delete_user = function (req,res) { //lista
+exports.delete_user = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
   //if (req.body.token !== token) return res.sendStatus(401);
   hub = req.query.hubName;
@@ -91,7 +91,7 @@ exports.delete_user = function (req,res) { //lista
   });
 };  
 
-exports.user_details = function (req,res) { //lista
+exports.user_details = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
   hub = req.query.hubName;
@@ -109,13 +109,13 @@ exports.user_details = function (req,res) { //lista
   });
 };
 
-exports.generate_pass = function (req,res) { //lista
-  var password = tools.generatePass(function(err,data) {
-    res.send(password);  
+exports.generate_pass = function (req,res) { 
+  tools.generatePass(function(err,data) {
+    res.send(data);  
   });
 };
 
-exports.vnc = function (req,res) { //lista
+exports.vnc = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
  // if (req.headers.token !== token) return res.sendStatus(401);
  ip = req.query.ip;

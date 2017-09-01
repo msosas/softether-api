@@ -161,7 +161,7 @@ module.exports = {
 
   generatePass: function(callback) { 
     var password = Math.random().toString(36).slice(-8);
-    callback(password);
+    callback(null,password);
   },
 
   vncConnect: function(ip) {    
@@ -170,7 +170,6 @@ module.exports = {
       vnc.kill();
     }
     vnc = require("child_process").spawn(VNCPATH,["--vnc", ip + ":5900"]);   
-    console.log(ip + " Connected");
-    
+    console.log(ip + " Connected"); 
   }
 };
