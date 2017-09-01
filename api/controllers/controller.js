@@ -4,9 +4,16 @@ var tools = require('../models/functions.js');
 // *********** Page Handling  ****************
 
 exports.check_server = function(req,res) {
-  //if (!req.body) return res.sendStatus (400);
-  res.send("The server is UP");
-  res.end();
+  tools.check(function(err,data){
+    if (err) {
+      res.sendStatus(500);
+      res.end();
+    }
+    else {
+      res.send(data);
+      res.end();
+    }
+  })
 };
 
 exports.sessions =  function (req,res) { 
@@ -15,7 +22,7 @@ exports.sessions =  function (req,res) {
   }
   console.log("Checking Sessions...");
  // if (req.headers.token !== token) return res.sendStatus(401);
- hub = req.query.hubName;
+ var hub = req.query.hubName;
  
   tools.getConnections(hub, function(err,data) {
     if (err) {
@@ -35,7 +42,7 @@ exports.all_users = function (req,res) {
   //if (req.headers.token !== token) return res.sendStatus(401);
   console.log("Getting all users...");
   
-  hub = req.query.hubName;
+  var hub = req.query.hubName;
   
   tools.getAllUsers(hub, function(err,data) {
     if (err) { 
@@ -53,7 +60,7 @@ exports.all_users = function (req,res) {
 exports.new_user = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
-  hub = req.query.hubName;
+  var hub = req.query.hubName;
   
   var userName = req.body.userName;
   var passwd = req.body.password;
@@ -77,7 +84,7 @@ exports.new_user = function (req,res) {
 exports.delete_user = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
   //if (req.body.token !== token) return res.sendStatus(401);
-  hub = req.query.hubName;
+  var hub = req.query.hubName;
   var userName = req.body.userName;
   tools.deleteUser(hub,userName, function(err,data) {
     if (err) {
@@ -94,7 +101,7 @@ exports.delete_user = function (req,res) {
 exports.user_details = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
-  hub = req.query.hubName;
+  var hub = req.query.hubName;
   var userName = req.query.userName;
   
   tools.userDetails(hub,userName,function(err,data){

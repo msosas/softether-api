@@ -2,15 +2,18 @@
 var csvjson = require('csvjson');
 var lodash = require('lodash');
 var credentials = require('../models/credentials.js');
+var exec =  require("child_process").exec;
+
+// Constants
 const VPNSERVER = credentials.server;
 const VPNPORT = credentials.port;
 const PASSWORD = credentials.password;
 const CONNECTION = "/usr/local/vpnclient/./vpncmd /server " +  VPNSERVER + ":" + VPNPORT + " /password:" + PASSWORD + " /adminhub:";
 const VNCPATH = "../novnc/utils/./launch.sh"
-var exec =  require("child_process").exec;
+
+//Variables
+
 var vnc;
-
-
 //For CSV to JSON
 var options = {
   delimiter : ',', 
@@ -19,11 +22,25 @@ var options = {
 
 //********************************************************************************
 
-if(VPNSERVER == "") {
-  console.log("ERROR: Server not defined...")
+if(VPNSERVER == undefined || VPNPORT == undefined || PASSWORD == undefined) {
+  console.log("ERROR: SERVER, PASSWORD or PORT not defined. Check /modules/credentials.js");
+}
+else {
+  console.log("Your are working with this server ==> " + VPNSERVER + ":" + VPNPORT);
 }
 
 module.exports = {
+
+  check: function(callback) {
+    exec(CONNECTION + " /cmd Check", function(err,data){
+      if(err) {
+        callback(err);
+      }
+      else {
+        callback(null,data);
+      }
+    })
+  },  
 
   sessionList: function(hub, callback) {
 
@@ -136,7 +153,7 @@ module.exports = {
   },
 
   //WARNING
-  //SoftEther doesn't generate CSV properly for this command. Keeping old parsing
+  //SoftEther doesn't generate CSV properly for this command. Keeping old parsing...
   userDetails: function(hub,userName,callback) {
 
     exec(CONNECTION + hub + " /cmd UserGet " + userName, function(err,data) {
@@ -166,7 +183,7 @@ module.exports = {
 
   vncConnect: function(ip) {    
     const spawn = require('child_process').spawn;
-    if(vnc != undefined) {
+    if(vnc !== undefined) {
       vnc.kill();
     }
     vnc = require("child_process").spawn(VNCPATH,["--vnc", ip + ":5900"]);   
