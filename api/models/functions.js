@@ -7,8 +7,7 @@ const VPNPORT = credentials.port;
 const PASSWORD = credentials.password;
 const CONNECTION = "/usr/local/vpnclient/./vpncmd /server " +  VPNSERVER + ":" + VPNPORT + " /password:" + PASSWORD + " /adminhub:";
 const VNCPATH = "../novnc/utils/./launch.sh"
-var exec = require("child_process").execSync; 
-var exec2 =  require("child_process").exec;
+var exec =  require("child_process").exec;
 var vnc;
 
 
@@ -28,7 +27,7 @@ module.exports = {
 
   sessionList: function(hub, callback) {
 
-    exec2(CONNECTION + hub + " /csv /cmd SessionList", function(err,data) {
+    exec(CONNECTION + hub + " /csv /cmd SessionList", function(err,data) {
       if (err) {
         callback(err);
       }
@@ -39,7 +38,7 @@ module.exports = {
   },
 
   IpTable: function(hub,callback) {
-    exec2(CONNECTION + hub + " /csv /cmd IpTable", function(err,data) {
+    exec(CONNECTION + hub + " /csv /cmd IpTable", function(err,data) {
       if (err) {
         callback(err);
       }
@@ -75,7 +74,7 @@ module.exports = {
 
 
   getAllUsers(hub,callback) {
-    exec2(CONNECTION + hub + " /csv /cmd UserList", function(err,data) {
+    exec(CONNECTION + hub + " /csv /cmd UserList", function(err,data) {
       if (err) { 
         callback(err); 
       }
@@ -89,12 +88,12 @@ module.exports = {
     if (group == "") {
       group = "none";
     }
-    exec2(CONNECTION + hub + " /cmd UserCreate " + accountName + " /GROUP:" + group + " /REALNAME:" + completeName + " /NOTE:none", function(err,data) {
+    exec(CONNECTION + hub + " /cmd UserCreate " + accountName + " /GROUP:" + group + " /REALNAME:" + completeName + " /NOTE:none", function(err,data) {
       if (err) {
         callback(err);
       }
       else {
-        exec2(CONNECTION + hub + " /cmd UserPasswordSet " + accountName + " /Password:" + password, function(err,data) {
+        exec(CONNECTION + hub + " /cmd UserPasswordSet " + accountName + " /Password:" + password, function(err,data) {
           if (err) {
             callback(err);
           }
@@ -107,7 +106,7 @@ module.exports = {
   },
 
   setPassword: function(hub,accountName,password) {
-    exec2(CONNECTION + hub + " /cmd UserPasswordSet " + accountName + "/Password:" + password, function() {
+    exec(CONNECTION + hub + " /cmd UserPasswordSet " + accountName + "/Password:" + password, function() {
       if (err) {
         callback(err);
       }
@@ -119,7 +118,7 @@ module.exports = {
 
 
   deleteUser: function(hub,userName, callback) {
-    exec2(CONNECTION + hub + " /cmd UserDelete " + userName, function(err,data) {
+    exec(CONNECTION + hub + " /cmd UserDelete " + userName, function(err,data) {
       console.log(hub);
       if (err) {
         callback(err);
@@ -132,18 +131,26 @@ module.exports = {
 
   //WARNING
   //Soft Ether doens generate CSV properly for this command. Keeping old parsing
-  userDetails: function(hub,userName) {
-    var info = exec(CONNECTION + hub + " /cmd UserGet " + userName).toString().split("\n");
-    info = info.splice(14); //Remove header
-    for (var i = 0 ; i < info.length; i++) {
-      info[i] = info[i].substring(30);   //Remove field description
-    }
-    info.shift();
-    info.pop();
-    info.pop();
-    info.pop();
-    info.splice(5,1);  //Remove delimiter ---------------
-    return JSON.stringify(info);
+  userDetails: function(hub,userName,callback) {
+
+    exec(CONNECTION + hub + " /cmd UserGet " + userName, function(err,data) {
+      if (err) {
+        callback(err);
+      }
+      else {
+        data = data.split("\n");
+        data = data.splice(14);
+        for (var i = 0 ; i < data.length; i++) {
+          data[i] = data[i].substring(30);   //Remove field description
+        }
+        data.shift();
+        data.pop();
+        data.pop();
+        data.pop();
+        data.splice(5,1);  //Remove delimiter ---------------
+        callback(null, data);
+      }
+    });
   },
 
   generatePass: function(callback) { 

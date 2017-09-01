@@ -95,15 +95,18 @@ exports.user_details = function (req,res) { //lista
   if (!req.body) return res.sendStatus(400);
   //if (req.headers.token !== token) return res.sendStatus(401);
   hub = req.query.hubName;
-  var userName = req.query.username;
-  if(hubList.indexOf(hub) > -1) {
-    var user = tools.userDetails(hub,userName);
-    res.send(user);
-  }
-  else {
-    res.send("Hub not found");
-  } 
-  res.end(); 
+  var userName = req.query.userName;
+  
+  tools.userDetails(hub,userName,function(err,data){
+    if (err) {
+      res.sendStatus(400);
+      res.end(); 
+    }
+    else {
+      res.send(data);    
+      res.end(); 
+    }
+  });
 };
 
 exports.session_list = function (req,res) { //lista
