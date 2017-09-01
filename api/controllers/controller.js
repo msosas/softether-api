@@ -109,22 +109,6 @@ exports.user_details = function (req,res) { //lista
   });
 };
 
-exports.session_list = function (req,res) { //lista
-  if (!req.body) return res.sendStatus(400);
-  if (req.body.token !== token) return res.sendStatus(401);
-  hub = "agencias";
-  var sessionName = req.body.sessionName;
-  if(hubList.indexOf(hub) > -1) {
-    var session = tools.sessionList("agencias",sessionName);
-    res.send(session);
-  }
-  else {
-    res.send("Hub not found");
-  } 
-  res.end(); 
-};
-
-
 exports.generate_pass = function (req,res) { //lista
   var password = tools.generatePass(function(err,data) {
     res.send(password);  

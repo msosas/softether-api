@@ -136,7 +136,7 @@ module.exports = {
   },
 
   //WARNING
-  //Soft Ether doens generate CSV properly for this command. Keeping old parsing
+  //SoftEther doesn't generate CSV properly for this command. Keeping old parsing
   userDetails: function(hub,userName,callback) {
 
     exec(CONNECTION + hub + " /cmd UserGet " + userName, function(err,data) {

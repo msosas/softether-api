@@ -19,9 +19,6 @@ module.exports = function(app) {
 	app.route('/user_details')
 	.get(vpnSE.user_details);
 
-	app.route('/session_list')
-	.get(vpnSE.session_list);
-
 	app.route('/generate_pass')
 	.get(vpnSE.generate_pass);
 
