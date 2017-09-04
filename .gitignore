@@ -1,2 +1,5 @@
 node_modules
 api/models/credentials.js
+.idea
+npm-debug.log
+softether-api.iml

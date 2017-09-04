@@ -1,5 +1,5 @@
 var tools = require('../models/functions.js');
-
+var token = '29131f3d713e8e360777ac3d2c1d42c8';
 
 // *********** Page Handling  ****************
 
@@ -22,8 +22,8 @@ exports.sessions =  function (req,res) {
     return res.sendStatus(400);
   }
   console.log("Checking Sessions...");
- // if (req.headers.token !== token) return res.sendStatus(401);
- var hub = req.query.hubName;
+  if (req.headers.token != token) return res.sendStatus(401);
+  var hub = req.headers.hubname;
  
   tools.getConnections(hub, function(err,data) {
     if (err) {
@@ -41,10 +41,11 @@ exports.sessions =  function (req,res) {
 
 exports.all_users = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
-  //if (req.headers.token !== token) return res.sendStatus(401);
+  if (req.headers.token != token) return res.sendStatus(401);
   console.log("Getting all users...");
   
-  var hub = req.query.hubName;
+  var hub = req.headers.hubname;
+  console.log(hub);
   
   tools.getAllUsers(hub, function(err,data) {
     if (err) { 
@@ -62,10 +63,10 @@ exports.all_users = function (req,res) {
 
 exports.new_user = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
-  //if (req.headers.token !== token) return res.sendStatus(401);
-  var hub = req.query.hubName;
+  if (req.headers.token != token) return res.sendStatus(401);
+  var hub = req.body.hubname;
   
-  var userName = req.body.userName;
+  var userName = req.body.username;
   var passwd = req.body.password;
   var description = req.body.description;
   var group = req.body.group;
@@ -87,9 +88,9 @@ exports.new_user = function (req,res) {
 
 exports.delete_user = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
-  //if (req.body.token !== token) return res.sendStatus(401);
-  var hub = req.query.hubName;
-  var userName = req.body.userName;
+  if (req.headers.token !== token) return res.sendStatus(401);
+  var hub = req.body.hubname;
+  var userName = req.body.username;
   tools.deleteUser(hub,userName, function(err,data) {
     if (err) {
       console.log("Error code: " + err.code);
@@ -105,9 +106,9 @@ exports.delete_user = function (req,res) {
 
 exports.user_details = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
-  //if (req.headers.token !== token) return res.sendStatus(401);
-  var hub = req.query.hubName;
-  var userName = req.query.userName;
+  if (req.headers.token !== token) return res.sendStatus(401);
+  var hub = req.headers.hubname;
+  var userName = req.headers.username;
   
   tools.userDetails(hub,userName,function(err,data){
     if (err) {
@@ -129,8 +130,8 @@ exports.generate_pass = function (req,res) {
 };
 
 exports.vnc = function (req,res) { 
-  if (!req.body) return res.sendStatus(400);
- // if (req.headers.token !== token) return res.sendStatus(401);
+ if (!req.body) return res.sendStatus(400);
+ if (req.headers.token !== token) return res.sendStatus(401);
  ip = req.query.ip;
  var url = tools.vncConnect(ip);
  res.end(); 

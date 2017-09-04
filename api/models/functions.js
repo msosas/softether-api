@@ -49,7 +49,12 @@ module.exports = {
         callback(err);
       }
       else {
-        callback(null, csvjson.toObject(data, options));    
+        var result = csvjson.toObject(data, options);
+        callback(null,
+          lodash.forEach(result,function(data){
+            data["Session Name"] = data["Session Name"].toLowerCase();
+          })
+        );
       }
     });
   },
@@ -61,10 +66,10 @@ module.exports = {
       }
       else {
         var result = csvjson.toObject(data, options);
-
         callback(null,
           lodash.forEach(result, function(data){
             data["IP Address"] = data["IP Address"].replace(" (DHCP)", "");
+            data["Session Name"] = data["Session Name"].toLowerCase();
           })
         );
       }
@@ -96,7 +101,7 @@ module.exports = {
   },
 
 
-  getAllUsers(hub,callback) {
+  getAllUsers: function(hub,callback) {
     exec(CONNECTION + hub + " /csv /cmd UserList", function(err,data) {
       if (err) { 
         callback(err); 
