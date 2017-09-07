@@ -9,7 +9,8 @@ const VPNSERVER = credentials.server;
 const VPNPORT = credentials.port;
 const PASSWORD = credentials.password;
 const CONNECTION = "/usr/local/vpnclient/./vpncmd /server " +  VPNSERVER + ":" + VPNPORT + " /password:" + PASSWORD + " /adminhub:";
-const VNCPATH = "../novnc/utils/./launch.sh"
+const VNCPATH = __dirname + "/../../../noVNC/utils/./launch.sh"
+
 
 //Variables
 
@@ -54,7 +55,7 @@ module.exports = {
           lodash.forEach(result,function(data){
             data["Session Name"] = data["Session Name"].toLowerCase();
           })
-        );
+          );
       }
     });
   },
@@ -71,7 +72,7 @@ module.exports = {
             data["IP Address"] = data["IP Address"].replace(" (DHCP)", "");
             data["Session Name"] = data["Session Name"].toLowerCase();
           })
-        );
+          );
       }
     });
   },
@@ -187,11 +188,25 @@ module.exports = {
   },
 
   vncConnect: function(ip) {    
-    const spawn = require('child_process').spawn;
-    if(vnc !== undefined) {
-      vnc.kill();
-    }
-    vnc = require("child_process").spawn(VNCPATH,["--vnc", ip + ":5900"]);   
-    console.log(ip + " Connected"); 
+    const CPORTS = ["6080","6081","6082","6083","6084","6085","6086","6087","6088","6089"];
+    
+    var i = 0;
+    //if(vnc !== undefined) {
+    //  vnc.kill();
+    //}
+    
+    while(i < CPORTS.length) {
+      var stdout = require('child_process').execSync("sudo netstat -nap | grep " + CPORTS[i] + " | wc -l").toString();
+
+      if (stdout != 0) {
+        console.log("Port " + CPORTS[i] + " used. Checking next one...");
+        i++; 
+      }
+      else {
+        console.log("Port " + CPORTS[i] + " is available");
+        require("child_process").spawn(VNCPATH, ["--listen", CPORTS[i]]);
+        break;  
+      }     
+    } 
   }
 };

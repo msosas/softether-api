@@ -22,7 +22,7 @@ exports.sessions =  function (req,res) {
     return res.sendStatus(400);
   }
   console.log("Checking Sessions...");
-  if (req.headers.token != token) return res.sendStatus(401);
+  if (req.headers.token !== token) return res.sendStatus(401);
   var hub = req.headers.hubname;
  
   tools.getConnections(hub, function(err,data) {
@@ -41,7 +41,7 @@ exports.sessions =  function (req,res) {
 
 exports.all_users = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
-  if (req.headers.token != token) return res.sendStatus(401);
+  if (req.headers.token !== token) return res.sendStatus(401);
   console.log("Getting all users...");
   
   var hub = req.headers.hubname;
@@ -63,7 +63,7 @@ exports.all_users = function (req,res) {
 
 exports.new_user = function (req,res) { 
   if (!req.body) return res.sendStatus(400);
-  if (req.headers.token != token) return res.sendStatus(401);
+  if (req.headers.token !== token) return res.sendStatus(401);
   var hub = req.body.hubname;
   
   var userName = req.body.username;
@@ -133,6 +133,8 @@ exports.vnc = function (req,res) {
  if (!req.body) return res.sendStatus(400);
  if (req.headers.token !== token) return res.sendStatus(401);
  ip = req.query.ip;
- var url = tools.vncConnect(ip);
- res.end(); 
+ tools.vncConnect(ip);
+ res.sendStatus(200);
+ res.end();  
+ 
 };
