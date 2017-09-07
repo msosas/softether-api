@@ -187,7 +187,8 @@ module.exports = {
     callback(null,password);
   },
 
-  vncConnect: function(ip) {    
+  vncConnect: function(ip) {
+    ip = ip.toString();
     const CPORTS = ["6080","6081","6082","6083","6084","6085","6086","6087","6088","6089"];
     
     var i = 0;
@@ -203,8 +204,8 @@ module.exports = {
         i++; 
       }
       else {
-        console.log("Port " + CPORTS[i] + " is available");
-        require("child_process").spawn(VNCPATH, ["--listen", CPORTS[i]]);
+        console.log("Connecting to " + ip);
+        require("child_process").spawn(VNCPATH, ["--listen", CPORTS[i], "--vnc", ip + ":5900"]);
         break;  
       }     
     } 
