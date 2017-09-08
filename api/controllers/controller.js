@@ -129,12 +129,16 @@ exports.generate_pass = function (req,res) {
   });
 };
 
-exports.vnc = function (req,res) { 
+exports.vnc_connect = function (req,res) {
  if (!req.body) return res.sendStatus(400);
  if (req.headers.token !== token) return res.sendStatus(401);
  ip = req.query.ip;
- tools.vncConnect(ip);
- res.sendStatus(200);
+ var port = tools.vncConnect(ip);
+ res.sendStatus(port);
  res.end();  
- 
+};
+
+exports.vnc_disconnect = function(req,res) {
+  tools.vncDisconnect(req.query.port);
+  res.sendStatus(200);
 };
