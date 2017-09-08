@@ -67,17 +67,18 @@ module.exports = {
       }
       else {
         var result = csvjson.toObject(data, options);
+    
         callback(null,
           lodash.forEach(result, function(data){
             data["IP Address"] = data["IP Address"].replace(" (DHCP)", "");
             data["Session Name"] = data["Session Name"].toLowerCase();
           })
-          );
+        );
       }
     });
   },
 
-  getConnections: function(hub,callback) {
+  /*getConnections: function(hub,callback) {
 
     if(hub == "servers") {
       module.exports.sessionList(hub, function(err,data) {
@@ -99,7 +100,7 @@ module.exports = {
         }
       });
     }
-  },
+  },*/
 
 
   getAllUsers: function(hub,callback) {

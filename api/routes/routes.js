@@ -7,6 +7,9 @@ module.exports = function(app) {
 	app.route('/sessions')
 	.get(vpnSE.sessions);
 
+	app.route('/iptable')
+	.get(vpnSE.iptable);
+
 	app.route('/all_users')
 	.get(vpnSE.all_users);
 
