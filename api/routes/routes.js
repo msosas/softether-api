@@ -22,6 +22,9 @@ module.exports = function(app) {
 	app.route('/generate_pass')
 	.get(vpnSE.generate_pass);
 
-	app.route('/vnc')
-	.get(vpnSE.vnc);
+	app.route('/vnc_connect')
+	.get(vpnSE.vnc_connect);
+
+	app.route('/vnc_disconnect')
+	.get(vpnSE.vnc_disconnect);
 };

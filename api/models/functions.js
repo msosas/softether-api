@@ -13,7 +13,7 @@ const VNCPATH = __dirname + "/../../../noVNC/utils/./launch.sh"
 
 
 //Variables
-
+var vncSessions = {};
 var vnc;
 //For CSV to JSON
 var options = {
@@ -205,9 +205,15 @@ module.exports = {
       }
       else {
         console.log("Connecting to " + ip);
-        require("child_process").spawn(VNCPATH, ["--listen", CPORTS[i], "--vnc", ip + ":5900"]);
+        vncSessions[CPORTS[i]] = require("child_process").spawn(VNCPATH, ["--listen", CPORTS[i], "--vnc", ip + ":5900"]);
         break;  
       }     
     } 
+    return JSON.stringify(CPORTS[i]);
+  },
+
+  vncDisconnect: function(port) {
+    vncSessions[port].kill('SIGINT');
+    return 0;
   }
 };
