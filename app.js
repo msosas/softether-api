@@ -23,6 +23,7 @@ var hub;
 //*****   Start Server:  **********
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Headers', 'token, hubname')
   next();
 });
 

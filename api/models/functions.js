@@ -55,7 +55,7 @@ module.exports = {
           lodash.forEach(result,function(data){
             data["Session Name"] = data["Session Name"].toLowerCase();
           })
-          );
+        );
       }
     });
   },
